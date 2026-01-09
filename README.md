@@ -1,5 +1,6 @@
 # Levivan.github.io
 学习记录
+2026.1.8
 1.登录
 随便登入
 bp抓包（输入账号密码后）
@@ -35,3 +36,33 @@ python将其翻译为ASCII码
 s=[55,56,54,79,115,69,114,116,107,49,50]
 for i in s:
 print(chr(i),end=")
+2026.1.9
+1.php2
+php相关现在url后先添加index.php，没有区别尝试index.phps(源代码)
+url解码：%+ASCII的十六进制
+例一：%25  ：25就是十六进制的 % ，整个解码就是 % 
+例二：%61 ：61是十六进制的a : 整个解码就是 a 
+构造payload ： http://111.198.29.45:48961/?id=%2561dmin 
+%25 通过url栏变成%，%61通过urldecode变成a，配合成id=admin
+2.ics06
+只有报表中心可以打开，url显示id=1无法修改，bp抓包爆破,找到明显长度不同的payload2333，id改为2333
+3.php的序列化与反序列化
+绕过_wakeup（）函数
+<?php
+class xctf{                      //定义一个名为xctf的类
+public $flag = '111';            //定义一个公有的类属性$flag，值为111
+public function __wakeup(){      //定义一个公有的类方法__wakeup()，输出bad requests后退出当前脚本
+exit('bad requests');
+}
+}
+$test = new xctf();           //使用new运算符来实例化该类（xctf）的对象为test
+echo(serialize($test));       //输出被序列化的对象（test）
+?>
+输出O:4:"xctf":1:{s:4:"flag";s:3:"111";}
+要绕过_wakeup(),修改1为2
+4.php_rce
+thinkphp漏洞*
+5.php的文件包含类型
+审计php代码,while函数根据page参数来判断php文件是否存在，如果存在此文件，则进行文件包含。
+默认页面为http://127.0.0.1/index.php,设置为page值，可确保while为真
+利用hello参数将执行内容显示，flag如图所示
