@@ -229,3 +229,4 @@ cookie：language=php://filter/read=convert.base64-encode/resource=/var/www/html
 出现base64，解密
 或者bp抓包，发现cookie的值
 sent给response
+2026.1.24
