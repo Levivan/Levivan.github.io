@@ -249,3 +249,5 @@ iconv使用方法见上
 使用：data://text/plain,代码内容#直接传入文本
 data://text/plain；base64，base64编码的代码#编码后传入绕过字符检测
 4.网页一大堆乱码搜索ctf：ctrl+F
+2026.3.5
+登录问题 用户名直接输入admin'or 1=1#
